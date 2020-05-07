@@ -1,4 +1,4 @@
-# esercizio-C-TEMPLATE
+# esercizio-C-2020-05-08-largest-file
 
 Le specifiche dell'esercizio si trovano nel file 'specifiche.txt'.
 
