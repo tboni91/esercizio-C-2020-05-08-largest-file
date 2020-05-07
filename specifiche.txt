@@ -1,1 +1,12 @@
-...
+esercizio:
+
+
+parte 1 - trova il file più grande cercandolo all'interno di una directory
+
+parte 2 - trova il file più grande cercandolo all'interno di una directory e di tutte le sue sotto-directory
+
+provare a fare girare il programma a partire da queste directory:
+
+/home/utente
+
+/
