@@ -1,9 +1,20 @@
 esercizio:
 
 
-parte 1 - trova il file più grande cercandolo all'interno di una directory
+parte 1 - trova il file regolare più grande cercandolo all'interno di una directory
 
-parte 2 - trova il file più grande cercandolo all'interno di una directory e di tutte le sue sotto-directory
+parte 2 - trova il file regolare più grande cercandolo all'interno di una directory e ricorsivamente in tutte le sue sotto-directory
+
+scrivere la seguente funzione:
+
+char * find_largest_file(char * directory_name, int explore_subdirectories_recursively, int * largest_file_size);
+
+la funzione restituisce il percorso completo del file regolare più grande cercato nella directory specificata da directory_name.
+se explore_subdirectories_recursively != 0, allora cerca ricorsivamente in tutte le sue sotto-directory.
+
+la dimensione del file regolare più grande viene scritta nella variabile il cui indirizzo è dato da largest_file_size.
+se non ci sono file regolare, la funzione restituisce NULL (e largest_file_size non viene utilizzato).
+
 
 provare a fare girare il programma a partire da queste directory:
 
