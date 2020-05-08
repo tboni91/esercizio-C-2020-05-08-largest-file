@@ -11,6 +11,7 @@ char * find_largest_file(char * directory_name, int explore_subdirectories_recur
 
 la funzione restituisce il percorso completo del file regolare più grande cercato nella directory specificata da directory_name.
 se explore_subdirectories_recursively != 0, allora cerca ricorsivamente in tutte le sue sotto-directory.
+(a parità di dimensioni, considera il primo trovato).
 
 la dimensione del file regolare più grande viene scritta nella variabile il cui indirizzo è dato da largest_file_size.
 se non ci sono file regolare, la funzione restituisce NULL (e largest_file_size non viene utilizzato).
