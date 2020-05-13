@@ -1,5 +1,7 @@
 esercizio:
 
+ottenere l'elenco dei file di una directory: fare riferimento a questo esempio:
+https://github.com/marcotessarotto/exOpSys/tree/master/023listFiles
 
 parte 1 - trova il file regolare più grande cercandolo all'interno di una directory
 
