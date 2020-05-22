@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -10,63 +12,22 @@ int there_are_directory(char * file_name);
 char * find_largest_file(char * directory_name, int explore_subdirectories_recursively, int * largest_file_size);
 // https://www.gnu.org/software/libc/manual/html_node/Simple-Directory-Lister.html
 
+
 int main(int argc, char *argv[]) {
-
-	DIR * dir_stream_ptr;
-	struct dirent *ep;
-
+	int largest_file_size = 0;
+	char * largest_file;
 	char * fileName;
-	unsigned long file_size = 0;
-	unsigned long largest_file = 0;
-
 
 	fileName = (argc == 1) ? "." : argv[1];
 
 	errno = 0;
 
-// man 3 opendir
-//    DIR *opendir(const char *name);
-//    DIR *fdopendir(int fd);
+	largest_file = find_largest_file(fileName, there_are_directory(fileName), &largest_file_size);
 
-
-	dir_stream_ptr = opendir(fileName);
-
-	if (dir_stream_ptr == NULL) {
-		printf("cannot open directory %s! bye", fileName);
-
-		return EXIT_FAILURE;
-	}
-
-	if (there_are_directory(fileName)) {
-		// allora cerca nelle directory in modo ricorsivo
-	} else {
-		// cerca file regolare maggiore se c'è
-	}
-
-	while ((ep = readdir(dir_stream_ptr)) != NULL) {
-
-		printf("%-10s ", (ep->d_type == DT_REG) ?  "regular" :
-		                                    (ep->d_type == DT_DIR) ?  "directory" :
-		                                    (ep->d_type == DT_FIFO) ? "FIFO" :
-		                                    (ep->d_type == DT_SOCK) ? "socket" :
-		                                    (ep->d_type == DT_LNK) ?  "symlink" :
-		                                    (ep->d_type == DT_BLK) ?  "block dev" :
-		                                    (ep->d_type == DT_CHR) ?  "char dev" : "???");
-
-		if (ep->d_type == DT_REG) {
-			file_size = get_file_size(ep->d_name);
-		}
-
-		printf("%s \t%lu\n", ep->d_name, file_size);
-
-		// come trovo il file size? posso usare stat (man 2 stat)
-	}
-
-	if (errno) {
-		perror("readdir() error");
-	}
-
-	closedir(dir_stream_ptr);
+	if (largest_file == NULL)
+		printf("Non sono presenti file regolari nella directory %s\n", fileName);
+	else
+		printf("File regolare più grande:\n%s | dimensione = %d\n", largest_file, largest_file_size);
 
 	puts("finished! bye!");
 
@@ -106,9 +67,67 @@ int there_are_directory(char * file_name) {
 }
 
 char * find_largest_file(char * directory_name, int explore_subdirectories_recursively, int * largest_file_size) {
+	DIR * dir_stream_ptr;
+	struct dirent *ep;
+
 	char * largest_file;
+	int file_size;
 
+	dir_stream_ptr = opendir(directory_name);
 
+	if (dir_stream_ptr == NULL) {
+		printf("cannot open directory %s! bye", directory_name);
+		return NULL;
+	}
+
+	printf("there are dir: %d\nlargest_file_size : %d\n", explore_subdirectories_recursively, *largest_file_size);
+
+	if (explore_subdirectories_recursively == 0) {
+
+		while ((ep = readdir(dir_stream_ptr)) != NULL) {
+			if (ep->d_type == DT_REG) {
+				printf("%s\n", ep->d_name);
+				file_size = get_file_size(ep->d_name);
+				if (*largest_file_size < file_size) {
+					*largest_file_size = file_size;
+					largest_file = ep->d_name;
+				}
+
+			}
+		}
+
+		if (errno) {
+			perror("readdir() error");
+			return NULL;
+		}
+	} else {
+
+		while ((ep = readdir(dir_stream_ptr)) != NULL) {
+			if (ep->d_type == DT_REG) {
+				printf("%s\n", ep->d_name);
+				file_size = get_file_size(ep->d_name);
+
+				if (*largest_file_size < file_size) {
+					*largest_file_size = file_size;
+					largest_file = ep->d_name;
+				}
+			} else if (ep->d_type == DT_DIR) {
+				printf("%s\n", ep->d_name);
+				largest_file = find_largest_file(ep->d_name, there_are_directory(ep->d_name), largest_file_size);
+			}
+		}
+
+		if (errno) {
+			perror("readdir() error");
+			return NULL;
+		}
+	}
+
+	closedir(dir_stream_ptr);
+	char * cwd = getcwd(NULL, 0);
+	largest_file = strcat(cwd, largest_file);
+
+	return largest_file;
 }
 
 
